@@ -36,8 +36,9 @@
   .info-row:last-of-type { border-bottom: none; }
   .info-icon { width: 32px; height: 32px; border-radius: 10px; background: #e8f4fb; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .info-icon svg { width: 15px; height: 15px; }
-　.info-label { font-size: 18px; color: #7ab5d0; margin-bottom: 8px; }
-　.info-value { font-size: 24px; color: #2c3e50; font-weight: 600; }
+  .info-label { font-size: 18px; color: #7ab5d0; margin-bottom: 6px; }
+  .info-value { font-size: 24px; color: #2c3e50; font-weight: 600; }
+  .info-time { font-size: 18px; color: #5ba8d4; margin-top: 4px; }
   .divider { border: none; border-top: 1.5px dashed #c8e4f0; margin: 18px 0; }
   .status-box { border-radius: 16px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; transition: all 0.5s; }
   .status-box.pending { background: #fff8e8; border: 1.5px solid #fde8a0; }
@@ -45,35 +46,43 @@
   .status-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 22px; }
   .status-icon.pending { background: #fef3cd; }
   .status-icon.entered { background: #d4f0e6; font-size: 20px; }
-  .status-title { font-size: 16px; font-weight: 700; }
+  .status-title { font-size: 20px; font-weight: 700; }
   .status-title.pending { color: #b8860b; }
   .status-title.entered { color: #1a7a4a; }
-  .status-time { font-size: 11px; color: #999; margin-top: 3px; }
+  .status-time { font-size: 14px; color: #999; margin-top: 3px; }
   .barcode-area { padding: 16px 0 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .barcode { display: flex; gap: 2px; align-items: flex-end; }
   .bar { background: #b8d8e8; border-radius: 1px; }
-　.ticket-id-text { font-size: 20px; color: #aac4d4; letter-spacing: 1.5px; }
-  .logout-btn { display: block; text-align: center; margin: 20px auto 0; font-size: 12px; color: #aac4d4; background: none; border: none; cursor: pointer; padding: 8px 16px; }
+  .ticket-id-text { font-size: 20px; color: #aac4d4; letter-spacing: 1.5px; }
+  .logout-btn { display: block; text-align: center; margin: 20px auto 0; font-size: 14px; color: #aac4d4; background: none; border: none; cursor: pointer; padding: 8px 16px; }
   .loading-overlay { position: fixed; inset: 0; background: rgba(240,247,255,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; z-index: 100; }
   .spinner { width: 36px; height: 36px; border: 3px solid #c8e4f0; border-top-color: #5ba8d4; border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .loading-text { font-size: 13px; color: #7ab5d0; }
   .poll-indicator { font-size: 18px; color: #7ab5d0; text-align: center; margin-top: 12px; }
+  .staff-swipe-wrap { margin-top: 16px; }
+  .staff-hint { text-align: center; font-size: 12px; color: #c8e4f0; margin-bottom: 8px; }
+  .staff-swipe-area { position: relative; background: rgba(91,168,212,0.1); border: 1.5px dashed #a8d8ea; border-radius: 14px; height: 56px; overflow: hidden; user-select: none; -webkit-user-select: none; touch-action: pan-y; transition: background 0.2s; display: none; }
+  .staff-swipe-area.active-swipe { background: rgba(91,168,212,0.2); border-color: #5ba8d4; }
+  .staff-swipe-track { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, rgba(91,168,212,0.3), transparent); width: 0; pointer-events: none; }
+  .staff-swipe-thumb { position: absolute; left: 6px; top: 6px; bottom: 6px; width: 44px; background: #5ba8d4; border-radius: 10px; display: flex; align-items: center; justify-content: center; pointer-events: none; box-shadow: 0 2px 8px rgba(91,168,212,0.4); }
+  .staff-swipe-thumb svg { width: 20px; height: 20px; }
+  .staff-swipe-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #5ba8d4; pointer-events: none; padding-left: 52px; }
+  .longpress-ring { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .longpress-ring svg { width: 40px; height: 40px; }
+  .longpress-circle { fill: none; stroke: #5ba8d4; stroke-width: 3; stroke-dasharray: 100; stroke-dashoffset: 100; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; }
+  .staff-cancel-btn { display: none; width: 100%; margin-top: 10px; background: none; border: 1px solid #c8e4f0; border-radius: 10px; padding: 8px; font-size: 13px; color: #aac4d4; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .staff-cancel-btn:active { background: #fee; color: #e05555; border-color: #e05555; }
 </style>
 </head>
 <body>
-
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <div class="loading-text">読み込み中...</div>
 </div>
-
-<!-- ログイン画面 -->
 <div class="login-screen" id="loginScreen" style="display:none;">
   <div class="login-logo">
-    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
-      <path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-    </svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
   </div>
   <div class="login-title">チケット確認</div>
   <div class="login-sub">お手持ちのチケット情報を<br>ご確認いただけます</div>
@@ -86,16 +95,11 @@
       <label class="input-label">購入者ID</label>
       <input class="login-input" id="idInput" type="text" placeholder="例：TKT-001">
     </div>
-    <div class="login-hint">
-      購入確認メールに記載の<br>
-      <strong>電話番号下4桁</strong> と <strong>購入者ID</strong> を入力してください
-    </div>
+    <div class="login-hint">購入確認メールに記載の<br><strong>電話番号下4桁</strong> と <strong>購入者ID</strong> を入力してください</div>
     <button class="login-btn" id="loginBtn" onclick="login()">チケットを表示する</button>
     <div class="error-msg" id="errorMsg"></div>
   </div>
 </div>
-
-<!-- チケット画面 -->
 <div class="ticket-screen" id="ticketScreen">
   <div class="ticket-header">
     <div class="header-label">ARTIST</div>
@@ -108,11 +112,7 @@
   <div class="ticket-body">
     <div class="info-row">
       <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#5ba8d4" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
-      <div>
-  <div class="info-label">日程</div>
-  <div class="info-value" id="ticketDate">—</div>
-  <div class="info-value" id="ticketTime" style="font-size:12px;color:#5ba8d4;margin-top:3px;"></div>
-</div>
+      <div><div class="info-label">日程</div><div class="info-value" id="ticketDate">—</div><div class="info-time" id="ticketTime"></div></div>
     </div>
     <div class="info-row">
       <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#5ba8d4" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
@@ -134,6 +134,20 @@
         <div class="status-time" id="statusTime">スタッフにご提示ください</div>
       </div>
     </div>
+    <div class="staff-swipe-wrap" id="staffSwipeWrap">
+      <div class="staff-hint" id="staffHint">［スタッフ操作エリア］長押し後にスワイプ</div>
+      <div class="staff-swipe-area" id="staffSwipeArea">
+        <div class="staff-swipe-track" id="staffTrack"></div>
+        <div class="staff-swipe-thumb" id="staffThumb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <div class="staff-swipe-label">右にスワイプして入場確認</div>
+        <div class="longpress-ring">
+          <svg viewBox="0 0 36 36"><circle class="longpress-circle" id="longpressCircle" cx="18" cy="18" r="16"/></svg>
+        </div>
+      </div>
+      <button class="staff-cancel-btn" id="staffCancelBtn" onclick="staffCancel()">↩ 入場を取り消す（スタッフ用）</button>
+    </div>
     <div class="barcode-area">
       <div class="barcode" id="barcodeEl"></div>
       <div class="ticket-id-text" id="ticketIdText"></div>
@@ -142,28 +156,21 @@
   </div>
   <button class="logout-btn" onclick="logout()">← 別のチケットを表示</button>
 </div>
-
 <script>
-// ★ GASのWebアプリURL（末尾の/execまで）
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzYToqczMa8qaRSy7vLp72X7zDV2rWHbsjW19zv-xTR14bK_YFxV-hfZXPJazMRN9_u9Q/exec";
+let pollingTimer = null, currentTicket = null, eventInfo = {};
+let longpressTimer = null, longpressInterval = null, isLongpressed = false, longpressProgress = 0;
+const LONGPRESS_DURATION = 2000;
 
-let pollingTimer = null;
-let currentTicket = null;
-let eventInfo = {};
-
-// 起動時にイベント情報を取得
 window.onload = function() {
-  fetch(GAS_URL + "?action=getEventInfo")
-    .then(r => r.json())
-    .then(info => {
-      eventInfo = info;
-      document.getElementById('loadingOverlay').style.display = 'none';
-      document.getElementById('loginScreen').style.display = 'flex';
-    })
-    .catch(() => {
-      document.getElementById('loadingOverlay').style.display = 'none';
-      document.getElementById('loginScreen').style.display = 'flex';
-    });
+  fetch(GAS_URL + "?action=getEventInfo").then(r => r.json()).then(info => {
+    eventInfo = info;
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+  }).catch(() => {
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+  });
 };
 
 function login() {
@@ -171,105 +178,137 @@ function login() {
   const ticketId = document.getElementById('idInput').value.trim();
   const errEl = document.getElementById('errorMsg');
   errEl.textContent = '';
-
-  if (phone.length !== 4 || !/^\d{4}$/.test(phone)) {
-    errEl.textContent = '電話番号の下4桁を数字4文字で入力してください';
-    return;
-  }
-  if (!ticketId) {
-    errEl.textContent = '購入者IDを入力してください';
-    return;
-  }
-
+  if (phone.length !== 4 || !/^\d{4}$/.test(phone)) { errEl.textContent = '電話番号の下4桁を数字4文字で入力してください'; return; }
+  if (!ticketId) { errEl.textContent = '購入者IDを入力してください'; return; }
   const btn = document.getElementById('loginBtn');
-  btn.disabled = true;
-  btn.textContent = '確認中...';
-
+  btn.disabled = true; btn.textContent = '確認中...';
   fetch(GAS_URL + "?action=findTicket&phone=" + encodeURIComponent(phone) + "&id=" + encodeURIComponent(ticketId))
-    .then(r => r.json())
-    .then(ticket => {
-      btn.disabled = false;
-      btn.textContent = 'チケットを表示する';
-      if (!ticket || ticket.error) {
-        errEl.textContent = '情報が一致するチケットが見つかりませんでした';
-        return;
-      }
-      currentTicket = ticket;
-      showTicket(ticket);
-    })
-    .catch(() => {
-      btn.disabled = false;
-      btn.textContent = 'チケットを表示する';
-      errEl.textContent = 'エラーが発生しました。もう一度お試しください';
-    });
+    .then(r => r.json()).then(ticket => {
+      btn.disabled = false; btn.textContent = 'チケットを表示する';
+      if (!ticket || ticket.error) { errEl.textContent = '情報が一致するチケットが見つかりませんでした'; return; }
+      currentTicket = ticket; showTicket(ticket);
+    }).catch(() => { btn.disabled = false; btn.textContent = 'チケットを表示する'; errEl.textContent = 'エラーが発生しました。もう一度お試しください'; });
 }
 
 function showTicket(ticket) {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('ticketScreen').style.display = 'block';
-
   document.getElementById('artistName').textContent = eventInfo.name || '森 恵';
   document.getElementById('tourTitle').textContent = eventInfo.tourTitle || '';
-　document.getElementById('ticketDate').textContent = eventInfo.date || '';
-　document.getElementById('ticketTime').textContent =
-    (eventInfo.openTime ? '開場 ' + eventInfo.openTime : '') +
-    (eventInfo.startTime ? '　開演 ' + eventInfo.startTime : '');
+  document.getElementById('ticketDate').textContent = eventInfo.date || '';
+  document.getElementById('ticketTime').textContent = (eventInfo.openTime ? '開場 ' + eventInfo.openTime : '') + (eventInfo.startTime ? '　開演 ' + eventInfo.startTime : '');
   document.getElementById('ticketVenue').textContent = eventInfo.venue || '';
   document.getElementById('ticketSeat').textContent = ticket.ticketType + '　' + ticket.seat;
   document.getElementById('ticketName').textContent = ticket.name + ' 様';
   document.getElementById('ticketIdText').textContent = ticket.id;
-
   updateStatus(ticket);
   generateBarcode(ticket.id);
-
+  setupStaffSwipe();
   if (pollingTimer) clearInterval(pollingTimer);
   pollingTimer = setInterval(() => pollStatus(ticket.rowIndex), 10000);
 }
 
 function updateStatus(ticket) {
-  const box   = document.getElementById('statusBox');
-  const icon  = document.getElementById('statusIcon');
+  const box = document.getElementById('statusBox');
+  const icon = document.getElementById('statusIcon');
   const title = document.getElementById('statusTitle');
-  const time  = document.getElementById('statusTime');
-
+  const time = document.getElementById('statusTime');
+  const swipeArea = document.getElementById('staffSwipeArea');
+  const cancelBtn = document.getElementById('staffCancelBtn');
+  const hint = document.getElementById('staffHint');
   if (ticket.checkin === '入場済') {
-    box.className   = 'status-box entered';
-    icon.className  = 'status-icon entered';
-    icon.textContent = '✓';
-    title.className = 'status-title entered';
-    title.textContent = '入場済み';
-    time.textContent  = ticket.checkinTime ? ticket.checkinTime + ' 確認済み' : '確認済み';
+    box.className = 'status-box entered'; icon.className = 'status-icon entered'; icon.textContent = '✓';
+    title.className = 'status-title entered'; title.textContent = '入場済み';
+    time.textContent = ticket.checkinTime ? ticket.checkinTime + ' 確認済み' : '確認済み';
+    swipeArea.style.display = 'none'; cancelBtn.style.display = 'block';
+    hint.textContent = '［スタッフ操作エリア］';
   } else {
-    box.className   = 'status-box pending';
-    icon.className  = 'status-icon pending';
-    icon.textContent = '🎫';
-    title.className = 'status-title pending';
-    title.textContent = '入場前';
-    time.textContent  = 'スタッフにご提示ください';
+    box.className = 'status-box pending'; icon.className = 'status-icon pending'; icon.textContent = '🎫';
+    title.className = 'status-title pending'; title.textContent = '入場前';
+    time.textContent = 'スタッフにご提示ください';
+    swipeArea.style.display = 'block'; cancelBtn.style.display = 'none';
+    hint.textContent = '［スタッフ操作エリア］長押し後にスワイプ';
   }
 }
 
+function setupStaffSwipe() {
+  const el = document.getElementById('staffSwipeArea');
+  const thumb = document.getElementById('staffThumb');
+  const track = document.getElementById('staffTrack');
+  const circle = document.getElementById('longpressCircle');
+  let startX = 0, curX = 0;
+  isLongpressed = false;
+
+  const resetLP = () => {
+    clearTimeout(longpressTimer); clearInterval(longpressInterval);
+    longpressProgress = 0; circle.style.strokeDashoffset = 100;
+    el.classList.remove('active-swipe'); isLongpressed = false;
+  };
+  const startLP = (clientX) => {
+    startX = clientX; isLongpressed = false; longpressProgress = 0;
+    el.classList.add('active-swipe');
+    const step = 100 / (LONGPRESS_DURATION / 50);
+    longpressInterval = setInterval(() => {
+      longpressProgress += step;
+      circle.style.strokeDashoffset = 100 - Math.min(longpressProgress, 100);
+    }, 50);
+    longpressTimer = setTimeout(() => { clearInterval(longpressInterval); isLongpressed = true; circle.style.strokeDashoffset = 0; }, LONGPRESS_DURATION);
+  };
+  const onMove = (clientX) => {
+    if (!isLongpressed) return;
+    const dx = Math.max(0, Math.min(clientX - startX, el.offsetWidth - 60));
+    curX = dx; thumb.style.left = (6 + dx) + 'px'; track.style.width = (dx + 50) + 'px';
+  };
+  const onEnd = () => {
+    if (!isLongpressed) { resetLP(); return; }
+    if (curX / (el.offsetWidth - 60) >= 0.72) {
+      thumb.style.left = (el.offsetWidth - 50) + 'px';
+      setTimeout(() => staffCheckIn(), 100);
+    } else { thumb.style.left = '6px'; track.style.width = '0'; }
+    resetLP(); curX = 0;
+  };
+  const newEl = el.cloneNode(true);
+  el.parentNode.replaceChild(newEl, el);
+  const swipe = document.getElementById('staffSwipeArea');
+  swipe.addEventListener('touchstart', e => startLP(e.touches[0].clientX), { passive: true });
+  swipe.addEventListener('touchmove', e => { e.preventDefault(); onMove(e.touches[0].clientX); }, { passive: false });
+  swipe.addEventListener('touchend', () => onEnd());
+  swipe.addEventListener('mousedown', e => startLP(e.clientX));
+  swipe.addEventListener('mousemove', e => { if (e.buttons === 1) onMove(e.clientX); });
+  swipe.addEventListener('mouseup', () => onEnd());
+  swipe.addEventListener('mouseleave', () => { if (longpressTimer) resetLP(); });
+}
+
+function staffCheckIn() {
+  if (!currentTicket) return;
+  fetch(GAS_URL + "?action=checkIn&row=" + currentTicket.rowIndex)
+    .then(r => r.json()).then(res => {
+      if (res && res.success) { currentTicket.checkin = '入場済'; currentTicket.checkinTime = res.time; updateStatus(currentTicket); }
+    }).catch(() => alert('エラーが発生しました'));
+}
+
+function staffCancel() {
+  if (!currentTicket) return;
+  if (!confirm('入場を取り消しますか？')) return;
+  fetch(GAS_URL + "?action=cancelCheckIn&row=" + currentTicket.rowIndex)
+    .then(r => r.json()).then(res => {
+      if (res && res.success) { currentTicket.checkin = '未確認'; currentTicket.cancelTime = res.time; updateStatus(currentTicket); }
+    }).catch(() => alert('エラーが発生しました'));
+}
+
 function pollStatus(rowIndex) {
-  fetch(GAS_URL + "?action=getTicketByRow&row=" + rowIndex)
-    .then(r => r.json())
-    .then(ticket => {
-      if (!ticket) return;
-      if (ticket.checkin !== (currentTicket && currentTicket.checkin)) {
-        currentTicket = ticket;
-        updateStatus(ticket);
-      }
-      document.getElementById('pollIndicator').textContent = '最終更新: ' + new Date().toLocaleTimeString('ja-JP');
-    })
-    .catch(() => {});
+  fetch(GAS_URL + "?action=getTicketByRow&row=" + rowIndex).then(r => r.json()).then(ticket => {
+    if (!ticket) return;
+    if (ticket.checkin !== (currentTicket && currentTicket.checkin)) { currentTicket = ticket; updateStatus(ticket); }
+    document.getElementById('pollIndicator').textContent = '最終更新: ' + new Date().toLocaleTimeString('ja-JP');
+  }).catch(() => {});
 }
 
 function generateBarcode(id) {
   const el = document.getElementById('barcodeEl');
   const seed = id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   const widths = [2,3,4,5,6,2,3,5,2,4,6,2,3,4,2,5,3,2,4,6,2,3];
-  el.innerHTML = widths.map((w, i) =>
-    `<div class="bar" style="width:${w}px;height:${20+((seed*(i+1))%14)}px;"></div>`
-  ).join('');
+  el.innerHTML = widths.map((w, i) => `<div class="bar" style="width:${w}px;height:${20+((seed*(i+1))%14)}px;"></div>`).join('');
 }
 
 function logout() {
