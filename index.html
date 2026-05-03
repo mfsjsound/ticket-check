@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>チケット確認 | 森 恵</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; background: linear-gradient(160deg, #d4eef9 0%, #f0f7ff 60%, #fff 100%); min-height: 100vh; }
+  .login-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; }
+  .login-logo { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #5ba8d4, #a8d8ea); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(91,168,212,0.3); }
+  .login-logo svg { width: 36px; height: 36px; }
+  .login-title { font-size: 22px; font-weight: 700; color: #2c5f7a; margin-bottom: 6px; }
+  .login-sub { font-size: 13px; color: #7ab5d0; margin-bottom: 32px; text-align: center; line-height: 1.6; }
+  .login-card { background: #fff; border-radius: 20px; padding: 28px 24px; width: 100%; max-width: 340px; box-shadow: 0 8px 32px rgba(91,168,212,0.15); }
+  .input-group { margin-bottom: 16px; }
+  .input-label { font-size: 11px; color: #7ab5d0; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
+  .login-input { width: 100%; background: #f0f7ff; border: 1.5px solid #c8e4f0; border-radius: 12px; padding: 12px 16px; font-size: 16px; color: #2c3e50; outline: none; transition: border-color 0.2s; }
+  .login-input:focus { border-color: #5ba8d4; background: #fff; }
+  .login-input::placeholder { color: #b0cdd9; font-size: 13px; }
+  .login-hint { font-size: 11px; color: #aac4d4; margin-bottom: 20px; line-height: 1.6; background: #f0f7ff; border-radius: 10px; padding: 10px 14px; }
+  .login-hint strong { color: #5ba8d4; }
+  .login-btn { width: 100%; background: linear-gradient(135deg, #5ba8d4, #4a90c0); border: none; border-radius: 14px; padding: 14px; font-size: 15px; font-weight: 600; color: #fff; cursor: pointer; box-shadow: 0 4px 14px rgba(91,168,212,0.35); transition: transform 0.15s; }
+  .login-btn:active { transform: scale(0.97); }
+  .login-btn:disabled { opacity: 0.6; }
+  .error-msg { margin-top: 12px; font-size: 12px; color: #e05555; text-align: center; min-height: 18px; }
+  .ticket-screen { display: none; padding-bottom: 32px; }
+  .ticket-header { background: linear-gradient(160deg, #5ba8d4 0%, #a8d8ea 70%, #d4eef9 100%); padding: 52px 24px 68px; position: relative; overflow: hidden; text-align: center; }
+  .ticket-header::before { content: ''; position: absolute; right: -40px; top: -40px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,0.12); }
+  .header-label { font-size: 10px; color: rgba(255,255,255,0.8); letter-spacing: 3px; margin-bottom: 8px; position: relative; z-index: 1; }
+  .header-artist { font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 6px; position: relative; z-index: 1; letter-spacing: 2px; }
+  .header-tour { font-size: 13px; color: rgba(255,255,255,0.9); position: relative; z-index: 1; }
+  .header-wave { position: absolute; bottom: -1px; left: 0; right: 0; }
+  .ticket-body { background: #fff; border-radius: 24px; margin: -24px 16px 0; padding: 24px 20px 20px; position: relative; z-index: 2; box-shadow: 0 4px 24px rgba(91,168,212,0.12); }
+  .info-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 0.5px solid #e8f4fb; }
+  .info-row:last-of-type { border-bottom: none; }
+  .info-icon { width: 32px; height: 32px; border-radius: 10px; background: #e8f4fb; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .info-icon svg { width: 15px; height: 15px; }
+  .info-label { font-size: 10px; color: #7ab5d0; margin-bottom: 3px; }
+  .info-value { font-size: 14px; color: #2c3e50; font-weight: 500; }
+  .divider { border: none; border-top: 1.5px dashed #c8e4f0; margin: 18px 0; }
+  .status-box { border-radius: 16px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; transition: all 0.5s; }
+  .status-box.pending { background: #fff8e8; border: 1.5px solid #fde8a0; }
+  .status-box.entered { background: #e6f9f3; border: 1.5px solid #8fe0c4; }
+  .status-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 22px; }
+  .status-icon.pending { background: #fef3cd; }
+  .status-icon.entered { background: #d4f0e6; font-size: 20px; }
+  .status-title { font-size: 16px; font-weight: 700; }
+  .status-title.pending { color: #b8860b; }
+  .status-title.entered { color: #1a7a4a; }
+  .status-time { font-size: 11px; color: #999; margin-top: 3px; }
+  .barcode-area { padding: 16px 0 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .barcode { display: flex; gap: 2px; align-items: flex-end; }
+  .bar { background: #b8d8e8; border-radius: 1px; }
+  .ticket-id-text { font-size: 10px; color: #aac4d4; letter-spacing: 1.5px; }
+  .logout-btn { display: block; text-align: center; margin: 20px auto 0; font-size: 12px; color: #aac4d4; background: none; border: none; cursor: pointer; padding: 8px 16px; }
+  .loading-overlay { position: fixed; inset: 0; background: rgba(240,247,255,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; z-index: 100; }
+  .spinner { width: 36px; height: 36px; border: 3px solid #c8e4f0; border-top-color: #5ba8d4; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 13px; color: #7ab5d0; }
+  .poll-indicator { font-size: 10px; color: #c8e4f0; text-align: center; margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">読み込み中...</div>
+</div>
+
+<!-- ログイン画面 -->
+<div class="login-screen" id="loginScreen" style="display:none;">
+  <div class="login-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
+      <path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+  </div>
+  <div class="login-title">チケット確認</div>
+  <div class="login-sub">お手持ちのチケット情報を<br>ご確認いただけます</div>
+  <div class="login-card">
+    <div class="input-group">
+      <label class="input-label">電話番号（下4桁）</label>
+      <input class="login-input" id="phoneInput" type="tel" maxlength="4" placeholder="例：5678" inputmode="numeric">
+    </div>
+    <div class="input-group">
+      <label class="input-label">購入者ID</label>
+      <input class="login-input" id="idInput" type="text" placeholder="例：TKT-001">
+    </div>
+    <div class="login-hint">
+      購入確認メールに記載の<br>
+      <strong>電話番号下4桁</strong> と <strong>購入者ID</strong> を入力してください
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="login()">チケットを表示する</button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+</div>
+
+<!-- チケット画面 -->
+<div class="ticket-screen" id="ticketScreen">
+  <div class="ticket-header">
+    <div class="header-label">ARTIST</div>
+    <div class="header-artist" id="artistName">森 恵</div>
+    <div class="header-tour" id="tourTitle"></div>
+    <svg class="header-wave" viewBox="0 0 375 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,25 Q94,0 188,25 Q281,50 375,25 L375,50 L0,50 Z" fill="#fff"/>
+    </svg>
+  </div>
+  <div class="ticket-body">
+    <div class="info-row">
+      <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#5ba8d4" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+      <div><div class="info-label">日程</div><div class="info-value" id="ticketDate">—</div></div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#5ba8d4" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
+      <div><div class="info-label">会場</div><div class="info-value" id="ticketVenue">—</div></div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#5ba8d4" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg></div>
+      <div><div class="info-label">チケット種別 / 座席</div><div class="info-value" id="ticketSeat">—</div></div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#5ba8d4" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg></div>
+      <div><div class="info-label">購入者名</div><div class="info-value" id="ticketName">—</div></div>
+    </div>
+    <hr class="divider">
+    <div class="status-box pending" id="statusBox">
+      <div class="status-icon pending" id="statusIcon">🎫</div>
+      <div>
+        <div class="status-title pending" id="statusTitle">入場前</div>
+        <div class="status-time" id="statusTime">スタッフにご提示ください</div>
+      </div>
+    </div>
+    <div class="barcode-area">
+      <div class="barcode" id="barcodeEl"></div>
+      <div class="ticket-id-text" id="ticketIdText"></div>
+    </div>
+    <div class="poll-indicator" id="pollIndicator"></div>
+  </div>
+  <button class="logout-btn" onclick="logout()">← 別のチケットを表示</button>
+</div>
+
+<script>
+// ★ GASのWebアプリURL（末尾の/execまで）
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzYToqczMa8qaRSy7vLp72X7zDV2rWHbsjW19zv-xTR14bK_YFxV-hfZXPJazMRN9_u9Q/exec";
+
+let pollingTimer = null;
+let currentTicket = null;
+let eventInfo = {};
+
+// 起動時にイベント情報を取得
+window.onload = function() {
+  fetch(GAS_URL + "?action=getEventInfo")
+    .then(r => r.json())
+    .then(info => {
+      eventInfo = info;
+      document.getElementById('loadingOverlay').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+    })
+    .catch(() => {
+      document.getElementById('loadingOverlay').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+    });
+};
+
+function login() {
+  const phone = document.getElementById('phoneInput').value.trim();
+  const ticketId = document.getElementById('idInput').value.trim();
+  const errEl = document.getElementById('errorMsg');
+  errEl.textContent = '';
+
+  if (phone.length !== 4 || !/^\d{4}$/.test(phone)) {
+    errEl.textContent = '電話番号の下4桁を数字4文字で入力してください';
+    return;
+  }
+  if (!ticketId) {
+    errEl.textContent = '購入者IDを入力してください';
+    return;
+  }
+
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.textContent = '確認中...';
+
+  fetch(GAS_URL + "?action=findTicket&phone=" + encodeURIComponent(phone) + "&id=" + encodeURIComponent(ticketId))
+    .then(r => r.json())
+    .then(ticket => {
+      btn.disabled = false;
+      btn.textContent = 'チケットを表示する';
+      if (!ticket || ticket.error) {
+        errEl.textContent = '情報が一致するチケットが見つかりませんでした';
+        return;
+      }
+      currentTicket = ticket;
+      showTicket(ticket);
+    })
+    .catch(() => {
+      btn.disabled = false;
+      btn.textContent = 'チケットを表示する';
+      errEl.textContent = 'エラーが発生しました。もう一度お試しください';
+    });
+}
+
+function showTicket(ticket) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('ticketScreen').style.display = 'block';
+
+  document.getElementById('artistName').textContent = eventInfo.name || '森 恵';
+  document.getElementById('tourTitle').textContent = eventInfo.tourTitle || '';
+  document.getElementById('ticketDate').textContent =
+    (eventInfo.date || '') +
+    (eventInfo.openTime ? '　開場 ' + eventInfo.openTime : '') +
+    (eventInfo.startTime ? '　開演 ' + eventInfo.startTime : '');
+  document.getElementById('ticketVenue').textContent = eventInfo.venue || '';
+  document.getElementById('ticketSeat').textContent = ticket.ticketType + '　' + ticket.seat;
+  document.getElementById('ticketName').textContent = ticket.name + ' 様';
+  document.getElementById('ticketIdText').textContent = ticket.id;
+
+  updateStatus(ticket);
+  generateBarcode(ticket.id);
+
+  if (pollingTimer) clearInterval(pollingTimer);
+  pollingTimer = setInterval(() => pollStatus(ticket.rowIndex), 10000);
+}
+
+function updateStatus(ticket) {
+  const box   = document.getElementById('statusBox');
+  const icon  = document.getElementById('statusIcon');
+  const title = document.getElementById('statusTitle');
+  const time  = document.getElementById('statusTime');
+
+  if (ticket.checkin === '入場済') {
+    box.className   = 'status-box entered';
+    icon.className  = 'status-icon entered';
+    icon.textContent = '✓';
+    title.className = 'status-title entered';
+    title.textContent = '入場済み';
+    time.textContent  = ticket.checkinTime ? ticket.checkinTime + ' 確認済み' : '確認済み';
+  } else {
+    box.className   = 'status-box pending';
+    icon.className  = 'status-icon pending';
+    icon.textContent = '🎫';
+    title.className = 'status-title pending';
+    title.textContent = '入場前';
+    time.textContent  = 'スタッフにご提示ください';
+  }
+}
+
+function pollStatus(rowIndex) {
+  fetch(GAS_URL + "?action=getTicketByRow&row=" + rowIndex)
+    .then(r => r.json())
+    .then(ticket => {
+      if (!ticket) return;
+      if (ticket.checkin !== (currentTicket && currentTicket.checkin)) {
+        currentTicket = ticket;
+        updateStatus(ticket);
+      }
+      document.getElementById('pollIndicator').textContent = '最終更新: ' + new Date().toLocaleTimeString('ja-JP');
+    })
+    .catch(() => {});
+}
+
+function generateBarcode(id) {
+  const el = document.getElementById('barcodeEl');
+  const seed = id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  const widths = [2,3,4,5,6,2,3,5,2,4,6,2,3,4,2,5,3,2,4,6,2,3];
+  el.innerHTML = widths.map((w, i) =>
+    `<div class="bar" style="width:${w}px;height:${20+((seed*(i+1))%14)}px;"></div>`
+  ).join('');
+}
+
+function logout() {
+  if (pollingTimer) clearInterval(pollingTimer);
+  currentTicket = null;
+  document.getElementById('phoneInput').value = '';
+  document.getElementById('idInput').value = '';
+  document.getElementById('errorMsg').textContent = '';
+  document.getElementById('ticketScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+</script>
+</body>
+</html>
