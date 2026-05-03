@@ -248,6 +248,7 @@ function showTicket(ticket) {
   updateStatus(ticket);
   generateBarcode(ticket.id);
   setupStaffSwipe();
+  checkSwipeAvailability();
   if (pollingTimer) clearInterval(pollingTimer);
   pollingTimer = setInterval(() => pollStatus(ticket.rowIndex, ticket.sheetName), 10000);
 }
