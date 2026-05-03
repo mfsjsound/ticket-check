@@ -300,7 +300,7 @@ function setupStaffSwipe() {
     e.preventDefault();
     if (curX / (el.offsetWidth - 60) >= 0.72) {
       thumb.style.left = (el.offsetWidth - 50) + 'px';
-      setTimeout(() => staffCheckIn(), 100);
+      staffCheckIn();
     } else {
       thumb.style.left = '6px';
       track.style.width = '0';
