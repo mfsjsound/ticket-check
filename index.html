@@ -240,43 +240,53 @@ function setupStaffSwipe() {
   isLongpressed = false;
 
   const resetLP = () => {
-    clearTimeout(longpressTimer); clearInterval(longpressInterval);
-    longpressProgress = 0; circle.style.strokeDashoffset = 100;
-    el.classList.remove('active-swipe'); isLongpressed = false;
+    clearTimeout(longpressTimer);
+    clearInterval(longpressInterval);
+    longpressProgress = 0;
+    circle.style.strokeDashoffset = 100;
+    el.classList.remove('active-swipe');
+    isLongpressed = false;
+    thumb.style.left = '6px';
+    track.style.width = '0';
   };
-  const startLP = (clientX) => {
-    startX = clientX; isLongpressed = false; longpressProgress = 0;
+
+  el.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startX = e.touches[0].clientX;
+    isLongpressed = false;
+    longpressProgress = 0;
     el.classList.add('active-swipe');
     const step = 100 / (LONGPRESS_DURATION / 50);
     longpressInterval = setInterval(() => {
       longpressProgress += step;
       circle.style.strokeDashoffset = 100 - Math.min(longpressProgress, 100);
     }, 50);
-    longpressTimer = setTimeout(() => { clearInterval(longpressInterval); isLongpressed = true; circle.style.strokeDashoffset = 0; }, LONGPRESS_DURATION);
-  };
-  const onMove = (clientX) => {
+    longpressTimer = setTimeout(() => {
+      clearInterval(longpressInterval);
+      isLongpressed = true;
+      circle.style.strokeDashoffset = 0;
+    }, LONGPRESS_DURATION);
+  }, { passive: false });
+
+  el.addEventListener('touchmove', (e) => {
+    e.preventDefault();
     if (!isLongpressed) return;
-    const dx = Math.max(0, Math.min(clientX - startX, el.offsetWidth - 60));
-    curX = dx; thumb.style.left = (6 + dx) + 'px'; track.style.width = (dx + 50) + 'px';
-  };
-  const onEnd = () => {
+    const dx = Math.max(0, Math.min(e.touches[0].clientX - startX, el.offsetWidth - 60));
+    curX = dx;
+    thumb.style.left = (6 + dx) + 'px';
+    track.style.width = (dx + 50) + 'px';
+  }, { passive: false });
+
+  el.addEventListener('touchend', (e) => {
+    e.preventDefault();
     if (!isLongpressed) { resetLP(); return; }
     if (curX / (el.offsetWidth - 60) >= 0.72) {
       thumb.style.left = (el.offsetWidth - 50) + 'px';
       setTimeout(() => staffCheckIn(), 100);
-    } else { thumb.style.left = '6px'; track.style.width = '0'; }
-    resetLP(); curX = 0;
-  };
-  const newEl = el.cloneNode(true);
-  el.parentNode.replaceChild(newEl, el);
-  const swipe = document.getElementById('staffSwipeArea');
-  swipe.addEventListener('touchstart', e => startLP(e.touches[0].clientX), { passive: true });
-  swipe.addEventListener('touchmove', e => { e.preventDefault(); onMove(e.touches[0].clientX); }, { passive: false });
-  swipe.addEventListener('touchend', () => onEnd());
-  swipe.addEventListener('mousedown', e => startLP(e.clientX));
-  swipe.addEventListener('mousemove', e => { if (e.buttons === 1) onMove(e.clientX); });
-  swipe.addEventListener('mouseup', () => onEnd());
-  swipe.addEventListener('mouseleave', () => { if (longpressTimer) resetLP(); });
+    }
+    resetLP();
+    curX = 0;
+  }, { passive: false });
 }
 
 function staffCheckIn() {
