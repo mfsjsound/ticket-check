@@ -311,9 +311,17 @@ function setupStaffSwipe() {
 
 function staffCheckIn() {
   if (!currentTicket) return;
+  // 即座に画面を入場済みに更新
+  currentTicket.checkin = '入場済';
+  currentTicket.checkinTime = '';
+  updateStatus(currentTicket);
+  // バックグラウンドでスプレッドシートに記録
   fetch(GAS_URL + "?action=checkIn&row=" + currentTicket.rowIndex + "&sheet=" + encodeURIComponent(currentTicket.sheetName))
     .then(r => r.json()).then(res => {
-      if (res && res.success) { currentTicket.checkin = '入場済'; currentTicket.checkinTime = res.time; updateStatus(currentTicket); }
+      if (res && res.success) {
+        currentTicket.checkinTime = res.time;
+        document.getElementById('statusTime').textContent = res.time + ' 確認済み';
+      }
     }).catch(() => alert('エラーが発生しました'));
 }
 
