@@ -160,7 +160,7 @@
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzYToqczMa8qaRSy7vLp72X7zDV2rWHbsjW19zv-xTR14bK_YFxV-hfZXPJazMRN9_u9Q/exec";
 let pollingTimer = null, currentTicket = null, eventInfo = {};
 let longpressTimer = null, longpressInterval = null, isLongpressed = false, longpressProgress = 0;
-const LONGPRESS_DURATION = 2000;
+const LONGPRESS_DURATION = 1000;
 
 window.onload = function() {
   fetch(GAS_URL + "?action=getEventInfo").then(r => r.json()).then(info => {
