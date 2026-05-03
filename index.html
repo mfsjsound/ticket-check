@@ -308,7 +308,10 @@ function checkSwipeAvailability() {
       hint.style.fontSize = '16px';
       clearInterval(countdownTimer);
     } else {
-      swipeArea.style.display = 'block';
+      // 入場済みの場合はスワイプエリアを表示しない
+      if (!currentTicket || currentTicket.checkin !== '入場済') {
+        swipeArea.style.display = 'block';
+      }
       hint.textContent = '［スタッフ操作エリア］右にスワイプして入場確認';
       hint.style.color = '#c8e4f0';
       hint.style.fontSize = '14px';
