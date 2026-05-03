@@ -150,11 +150,12 @@
       <div><div class="info-label">購入者名</div><div class="info-value" id="ticketName">—</div></div>
     </div>
     <hr class="divider">
-    <div class="status-box pending" id="statusBox">
+　　<div class="status-box pending" id="statusBox">
       <div class="status-icon pending" id="statusIcon">🎫</div>
-      <div>
+      <div style="flex:1;">
         <div class="status-title pending" id="statusTitle">入場前</div>
         <div class="status-time" id="statusTime">スタッフにご提示ください</div>
+        <div id="statusSeat" style="font-size:26px;font-weight:700;color:#2c3e50;margin-top:6px;"></div>
       </div>
     </div>
     <div class="staff-swipe-wrap">
@@ -242,6 +243,7 @@ function showTicket(ticket) {
   document.getElementById('ticketVenue').textContent = currentEvent ? currentEvent.venue : '';
   document.getElementById('ticketSeat').textContent = ticket.ticketType + '　' + ticket.seat;
   document.getElementById('ticketName').textContent = ticket.name + ' 様';
+　document.getElementById('statusSeat').textContent = ticket.seat || '';
   document.getElementById('ticketIdText').textContent = ticket.id;
   updateStatus(ticket);
   generateBarcode(ticket.id);
