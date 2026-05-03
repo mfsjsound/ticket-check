@@ -289,13 +289,9 @@ if (now < availableFrom) {
       const h = Math.floor(diffMs / 3600000);
       const m = Math.floor((diffMs % 3600000) / 60000);
       const s = Math.floor((diffMs % 60000) / 1000);
-      hint.textContent = '入場受付開始まで';
+　　　hint.textContent = '入場受付開始まで ' + (h > 0 ? h + '時間 ' : '') + m + '分 ' + String(s).padStart(2,'0') + '秒';
       hint.style.color = '#f0a500';
       hint.style.fontSize = '16px';
-      const countdown = document.getElementById('swipeCountdown');
-      if (countdown) {
-        countdown.style.display = 'block';
-        countdown.textContent = (h > 0 ? h + '時間 ' : '') + m + '分 ' + String(s).padStart(2,'0') + '秒';
       }
   } else if (now > availableUntil) {
     // 終了後
