@@ -7,8 +7,6 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; background: linear-gradient(160deg, #d4eef9 0%, #f0f7ff 60%, #fff 100%); min-height: 100vh; }
-
-  /* ── ログイン画面 ── */
   .login-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; }
   .login-logo { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #5ba8d4, #a8d8ea); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(91,168,212,0.3); }
   .login-logo svg { width: 36px; height: 36px; }
@@ -27,14 +25,10 @@
   .login-btn:active { transform: scale(0.97); }
   .login-btn:disabled { opacity: 0.6; }
   .error-msg { margin-top: 12px; font-size: 13px; color: #e05555; text-align: center; min-height: 18px; }
-
-  /* ── 公演選択 ── */
   .event-select { width: 100%; background: #f0f7ff; border: 1.5px solid #c8e4f0; border-radius: 12px; padding: 12px 16px; font-size: 16px; color: #2c3e50; outline: none; appearance: none; -webkit-appearance: none; cursor: pointer; }
   .event-select:focus { border-color: #5ba8d4; }
   .select-wrap { position: relative; }
   .select-wrap::after { content: '▼'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #7ab5d0; font-size: 12px; pointer-events: none; }
-
-  /* ── チケット画面 ── */
   .ticket-screen { display: none; padding-bottom: 32px; }
   .ticket-header { background: linear-gradient(160deg, #5ba8d4 0%, #a8d8ea 70%, #d4eef9 100%); padding: 52px 24px 68px; position: relative; overflow: hidden; text-align: center; }
   .ticket-header::before { content: ''; position: absolute; right: -40px; top: -40px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,0.12); }
@@ -57,7 +51,7 @@
   .status-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 22px; }
   .status-icon.pending { background: #fef3cd; }
   .status-icon.entered { background: #d4f0e6; font-size: 20px; }
-  .status-title { font-size: 46px; font-weight: 700; }
+  .status-title { font-size: 32px; font-weight: 700; }
   .status-title.pending { color: #b8860b; }
   .status-title.entered { color: #1a7a4a; }
   .status-time { font-size: 14px; color: #999; margin-top: 3px; }
@@ -71,10 +65,8 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   .loading-text { font-size: 13px; color: #7ab5d0; }
   .poll-indicator { font-size: 18px; color: #7ab5d0; text-align: center; margin-top: 12px; }
-
-  /* ── スタッフ用スワイプ ── */
   .staff-swipe-wrap { margin-top: 16px; }
-  .staff-hint { text-align: center; font-size: 12px; color: #c8e4f0; margin-bottom: 8px; }
+  .staff-hint { text-align: center; font-size: 14px; color: #c8e4f0; margin-bottom: 8px; }
   .staff-swipe-area { position: relative; background: rgba(91,168,212,0.1); border: 1.5px dashed #a8d8ea; border-radius: 14px; height: 112px; overflow: hidden; user-select: none; -webkit-user-select: none; touch-action: pan-y; transition: background 0.2s; display: none; }
   .staff-swipe-track { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, rgba(91,168,212,0.3), transparent); width: 0; pointer-events: none; }
   .staff-swipe-thumb { position: absolute; left: 6px; top: 6px; bottom: 6px; width: 44px; background: #5ba8d4; border-radius: 10px; display: flex; align-items: center; justify-content: center; pointer-events: none; box-shadow: 0 2px 8px rgba(91,168,212,0.4); }
@@ -90,7 +82,6 @@
   <div class="loading-text">読み込み中...</div>
 </div>
 
-<!-- ログイン画面 -->
 <div class="login-screen" id="loginScreen" style="display:none;">
   <div class="login-logo">
     <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -122,7 +113,6 @@
   </div>
 </div>
 
-<!-- チケット画面 -->
 <div class="ticket-screen" id="ticketScreen">
   <div class="ticket-header">
     <div class="header-label">ARTIST</div>
@@ -150,7 +140,7 @@
       <div><div class="info-label">購入者名</div><div class="info-value" id="ticketName">—</div></div>
     </div>
     <hr class="divider">
-　　<div class="status-box pending" id="statusBox">
+    <div class="status-box pending" id="statusBox">
       <div class="status-icon pending" id="statusIcon">🎫</div>
       <div style="flex:1;">
         <div class="status-title pending" id="statusTitle">入場前</div>
@@ -181,6 +171,7 @@
 <script>
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzYToqczMa8qaRSy7vLp72X7zDV2rWHbsjW19zv-xTR14bK_YFxV-hfZXPJazMRN9_u9Q/exec";
 let pollingTimer = null, currentTicket = null, currentEvent = null, eventList = [];
+let countdownTimer = null;
 
 window.onload = function() {
   fetch(GAS_URL + "?action=getEventList")
@@ -213,13 +204,10 @@ function login() {
   if (!no) { errEl.textContent = '公演を選択してください'; return; }
   if (phone.length !== 4 || !/^\d{4}$/.test(phone)) { errEl.textContent = '電話番号の下4桁を数字4文字で入力してください'; return; }
   if (!ticketId) { errEl.textContent = '購入者IDを入力してください'; return; }
-
   currentEvent = eventList.find(e => e.no === no);
   const sheetName = currentEvent ? currentEvent.sheetName : '購入者_01';
-
   const btn = document.getElementById('loginBtn');
   btn.disabled = true; btn.textContent = '確認中...';
-
   fetch(GAS_URL + "?action=findTicket&phone=" + encodeURIComponent(phone) + "&id=" + encodeURIComponent(ticketId) + "&sheet=" + encodeURIComponent(sheetName))
     .then(r => r.json())
     .then(ticket => {
@@ -243,66 +231,10 @@ function showTicket(ticket) {
   document.getElementById('ticketVenue').textContent = currentEvent ? currentEvent.venue : '';
   document.getElementById('ticketSeat').innerHTML = ticket.ticketType + '<br>' + ticket.seat;
   document.getElementById('ticketName').textContent = ticket.name + ' 様';
-　document.getElementById('statusSeat').textContent = ticket.seat || '';
+  document.getElementById('statusSeat').textContent = ticket.seat || '';
   document.getElementById('ticketIdText').textContent = ticket.id;
   updateStatus(ticket);
   generateBarcode(ticket.id);
- function checkSwipeAvailability() {
-  if (!currentEvent) return;
-  const now = new Date();
-
-  // 開場時間を取得
-  const openTimeStr = currentEvent.openTime || '';
-  const startTimeStr = currentEvent.startTime || '';
-  const dateStr = currentEvent.date || '';
-
-  // 日付をパース（例：2026.6.6㊏ → 2026/6/6）
-  const dateClean = dateStr.replace(/[^\d.\/年月日]/g, '').replace(/[.年月]/g, '/').replace(/日/, '');
-  const dateParts = dateClean.split('/');
-  const year  = parseInt(dateParts[0]) || now.getFullYear();
-  const month = parseInt(dateParts[1]) - 1 || now.getMonth();
-  const day   = parseInt(dateParts[2]) || now.getDate();
-
-  // 開場時間パース
-  const openParts = openTimeStr.split(':');
-  const openH = parseInt(openParts[0]) || 0;
-  const openM = parseInt(openParts[1]) || 0;
-  const openTime = new Date(year, month, day, openH, openM, 0);
-
-  // 開演時間パース
-  const startParts = startTimeStr.split(':');
-  const startH = parseInt(startParts[0]) || 0;
-  const startM = parseInt(startParts[1]) || 0;
-  const startTime = new Date(year, month, day, startH, startM, 0);
-
-  // 30分前から有効
-  const availableFrom = new Date(openTime.getTime() - 30 * 60 * 1000);
-  // 開演から3時間後に無効
-  const availableUntil = new Date(startTime.getTime() + 3 * 60 * 60 * 1000);
-
-  const swipeArea = document.getElementById('staffSwipeArea');
-  const hint = document.getElementById('staffHint');
-
-if (now < availableFrom) {
-      swipeArea.style.display = 'none';
-      const diffMs = availableFrom - now;
-      const h = Math.floor(diffMs / 3600000);
-      const m = Math.floor((diffMs % 3600000) / 60000);
-      const s = Math.floor((diffMs % 60000) / 1000);
-　　　hint.textContent = '入場受付開始まで ' + (h > 0 ? h + '時間 ' : '') + m + '分 ' + String(s).padStart(2,'0') + '秒';
-      hint.style.color = '#f0a500';
-      hint.style.fontSize = '16px';
-      }
-  } else if (now > availableUntil) {
-    // 終了後
-    swipeArea.style.display = 'none';
-    hint.textContent = '入場受付は終了しました';
-    hint.style.color = '#e05555';
-  } else {
-    // 受付中
-    hint.style.color = '#c8e4f0';
-  }
-}
   setupStaffSwipe();
   checkSwipeAvailability();
   if (pollingTimer) clearInterval(pollingTimer);
@@ -330,6 +262,61 @@ function updateStatus(ticket) {
     swipeArea.style.display = 'block'; cancelBtn.style.display = 'none';
     hint.textContent = '［スタッフ操作エリア］右にスワイプして入場確認';
   }
+}
+
+function checkSwipeAvailability() {
+  if (!currentEvent) return;
+  if (countdownTimer) clearInterval(countdownTimer);
+
+  const dateStr = currentEvent.date || '';
+  const openTimeStr = currentEvent.openTime || '';
+  const startTimeStr = currentEvent.startTime || '';
+
+  const dateClean = dateStr.replace(/[^\d\/年月日]/g, '').replace(/[年月]/g, '/').replace(/日/, '');
+  const dateParts = dateClean.split('/');
+  const year  = parseInt(dateParts[0]) || new Date().getFullYear();
+  const month = parseInt(dateParts[1]) - 1;
+  const day   = parseInt(dateParts[2]);
+
+  const openParts = openTimeStr.split(':');
+  const openTime = new Date(year, month, day, parseInt(openParts[0])||0, parseInt(openParts[1])||0, 0);
+
+  const startParts = startTimeStr.split(':');
+  const startTime = new Date(year, month, day, parseInt(startParts[0])||0, parseInt(startParts[1])||0, 0);
+
+  const availableFrom  = new Date(openTime.getTime() - 30 * 60 * 1000);
+  const availableUntil = new Date(startTime.getTime() + 3 * 60 * 60 * 1000);
+
+  function update() {
+    const now = new Date();
+    const swipeArea = document.getElementById('staffSwipeArea');
+    const hint = document.getElementById('staffHint');
+
+    if (now < availableFrom) {
+      swipeArea.style.display = 'none';
+      const diffMs = availableFrom - now;
+      const h = Math.floor(diffMs / 3600000);
+      const m = Math.floor((diffMs % 3600000) / 60000);
+      const s = Math.floor((diffMs % 60000) / 1000);
+      hint.textContent = '入場受付開始まで ' + (h > 0 ? h + '時間 ' : '') + m + '分 ' + String(s).padStart(2,'0') + '秒';
+      hint.style.color = '#f0a500';
+      hint.style.fontSize = '16px';
+    } else if (now > availableUntil) {
+      swipeArea.style.display = 'none';
+      hint.textContent = '入場受付は終了しました';
+      hint.style.color = '#e05555';
+      hint.style.fontSize = '16px';
+      clearInterval(countdownTimer);
+    } else {
+      swipeArea.style.display = 'block';
+      hint.textContent = '［スタッフ操作エリア］右にスワイプして入場確認';
+      hint.style.color = '#c8e4f0';
+      hint.style.fontSize = '14px';
+    }
+  }
+
+  update();
+  countdownTimer = setInterval(update, 1000);
 }
 
 function setupStaffSwipe() {
@@ -368,11 +355,9 @@ function setupStaffSwipe() {
 
 function staffCheckIn() {
   if (!currentTicket) return;
-  // 即座に画面を入場済みに更新
   currentTicket.checkin = '入場済';
   currentTicket.checkinTime = '';
   updateStatus(currentTicket);
-  // バックグラウンドでスプレッドシートに記録
   fetch(GAS_URL + "?action=checkIn&row=" + currentTicket.rowIndex + "&sheet=" + encodeURIComponent(currentTicket.sheetName))
     .then(r => r.json()).then(res => {
       if (res && res.success) {
@@ -409,6 +394,7 @@ function generateBarcode(id) {
 
 function logout() {
   if (pollingTimer) clearInterval(pollingTimer);
+  if (countdownTimer) clearInterval(countdownTimer);
   currentTicket = null; currentEvent = null;
   document.getElementById('phoneInput').value = '';
   document.getElementById('idInput').value = '';
