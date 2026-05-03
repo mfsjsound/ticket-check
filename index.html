@@ -247,6 +247,58 @@ function showTicket(ticket) {
   document.getElementById('ticketIdText').textContent = ticket.id;
   updateStatus(ticket);
   generateBarcode(ticket.id);
+ function checkSwipeAvailability() {
+  if (!currentEvent) return;
+  const now = new Date();
+
+  // 開場時間を取得
+  const openTimeStr = currentEvent.openTime || '';
+  const startTimeStr = currentEvent.startTime || '';
+  const dateStr = currentEvent.date || '';
+
+  // 日付をパース（例：2026.6.6㊏ → 2026/6/6）
+  const dateClean = dateStr.replace(/[^\d.\/年月日]/g, '').replace(/[.年月]/g, '/').replace(/日/, '');
+  const dateParts = dateClean.split('/');
+  const year  = parseInt(dateParts[0]) || now.getFullYear();
+  const month = parseInt(dateParts[1]) - 1 || now.getMonth();
+  const day   = parseInt(dateParts[2]) || now.getDate();
+
+  // 開場時間パース
+  const openParts = openTimeStr.split(':');
+  const openH = parseInt(openParts[0]) || 0;
+  const openM = parseInt(openParts[1]) || 0;
+  const openTime = new Date(year, month, day, openH, openM, 0);
+
+  // 開演時間パース
+  const startParts = startTimeStr.split(':');
+  const startH = parseInt(startParts[0]) || 0;
+  const startM = parseInt(startParts[1]) || 0;
+  const startTime = new Date(year, month, day, startH, startM, 0);
+
+  // 30分前から有効
+  const availableFrom = new Date(openTime.getTime() - 30 * 60 * 1000);
+  // 開演から3時間後に無効
+  const availableUntil = new Date(startTime.getTime() + 3 * 60 * 60 * 1000);
+
+  const swipeArea = document.getElementById('staffSwipeArea');
+  const hint = document.getElementById('staffHint');
+
+  if (now < availableFrom) {
+    // まだ時間前
+    swipeArea.style.display = 'none';
+    const diff = Math.ceil((availableFrom - now) / 60000);
+    hint.textContent = '入場受付は開場' + diff + '分前から開始します';
+    hint.style.color = '#f0a500';
+  } else if (now > availableUntil) {
+    // 終了後
+    swipeArea.style.display = 'none';
+    hint.textContent = '入場受付は終了しました';
+    hint.style.color = '#e05555';
+  } else {
+    // 受付中
+    hint.style.color = '#c8e4f0';
+  }
+}
   setupStaffSwipe();
   checkSwipeAvailability();
   if (pollingTimer) clearInterval(pollingTimer);
