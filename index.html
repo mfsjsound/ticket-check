@@ -227,7 +227,7 @@ function updateStatus(ticket) {
     title.className = 'status-title pending'; title.textContent = '入場前';
     time.textContent = 'スタッフにご提示ください';
     swipeArea.style.display = 'block'; cancelBtn.style.display = 'none';
-    hint.textContent = '［スタッフ操作エリア］長押し後にスワイプ';
+    hint.textContent = '［スタッフ操作エリア］右にスワイプして入場確認';
   }
 }
 
@@ -235,42 +235,17 @@ function setupStaffSwipe() {
   const el = document.getElementById('staffSwipeArea');
   const thumb = document.getElementById('staffThumb');
   const track = document.getElementById('staffTrack');
-  const circle = document.getElementById('longpressCircle');
-  let startX = 0, curX = 0;
-  isLongpressed = false;
-
-  const resetLP = () => {
-    clearTimeout(longpressTimer);
-    clearInterval(longpressInterval);
-    longpressProgress = 0;
-    circle.style.strokeDashoffset = 100;
-    el.classList.remove('active-swipe');
-    isLongpressed = false;
-    thumb.style.left = '6px';
-    track.style.width = '0';
-  };
+  let startX = 0, curX = 0, dragging = false;
 
   el.addEventListener('touchstart', (e) => {
     e.preventDefault();
     startX = e.touches[0].clientX;
-    isLongpressed = false;
-    longpressProgress = 0;
-    el.classList.add('active-swipe');
-    const step = 100 / (LONGPRESS_DURATION / 50);
-    longpressInterval = setInterval(() => {
-      longpressProgress += step;
-      circle.style.strokeDashoffset = 100 - Math.min(longpressProgress, 100);
-    }, 50);
-    longpressTimer = setTimeout(() => {
-      clearInterval(longpressInterval);
-      isLongpressed = true;
-      circle.style.strokeDashoffset = 0;
-    }, LONGPRESS_DURATION);
+    dragging = true;
   }, { passive: false });
 
   el.addEventListener('touchmove', (e) => {
     e.preventDefault();
-    if (!isLongpressed) return;
+    if (!dragging) return;
     const dx = Math.max(0, Math.min(e.touches[0].clientX - startX, el.offsetWidth - 60));
     curX = dx;
     thumb.style.left = (6 + dx) + 'px';
@@ -279,16 +254,17 @@ function setupStaffSwipe() {
 
   el.addEventListener('touchend', (e) => {
     e.preventDefault();
-    if (!isLongpressed) { resetLP(); return; }
     if (curX / (el.offsetWidth - 60) >= 0.72) {
       thumb.style.left = (el.offsetWidth - 50) + 'px';
       setTimeout(() => staffCheckIn(), 100);
+    } else {
+      thumb.style.left = '6px';
+      track.style.width = '0';
     }
-    resetLP();
+    dragging = false;
     curX = 0;
   }, { passive: false });
 }
-
 function staffCheckIn() {
   if (!currentTicket) return;
   fetch(GAS_URL + "?action=checkIn&row=" + currentTicket.rowIndex)
